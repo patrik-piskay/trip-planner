@@ -1,0 +1,9 @@
+{
+  "extends": "react-app",
+  "env": {
+    "browser": false,
+    "commonjs": false,
+    "node": false,
+    "es6": false
+  }
+}
