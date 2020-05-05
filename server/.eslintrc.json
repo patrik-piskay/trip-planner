@@ -1,5 +1,20 @@
 {
+  "extends": ["react-app", "plugin:node/recommended"],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
   "env": {
-    "node": true
+    "node": true,
+    "browser": false
+  },
+  "rules": {
+    "node/no-unsupported-features/es-syntax": [
+      "error",
+      {
+        "version": ">=14.0.0",
+        "ignores": ["modules"]
+      }
+    ]
   }
 }

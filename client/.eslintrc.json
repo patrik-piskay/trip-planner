@@ -1,5 +1,12 @@
 {
+  "extends": "react-app",
   "env": {
-    "browser": true
+    "browser": true,
+    "commonjs": false,
+    "node": false,
+    "es6": false
+  },
+  "rules": {
+    "import/no-unresolved": ["error", { "commonjs": true }]
   }
 }
