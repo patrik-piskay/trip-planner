@@ -1,20 +1,11 @@
 {
+  "plugins": ["node"],
   "extends": ["react-app", "plugin:node/recommended"],
   "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module"
+    "ecmaVersion": 2020
   },
   "env": {
-    "node": true,
-    "browser": false
+    "node": true
   },
-  "rules": {
-    "node/no-unsupported-features/es-syntax": [
-      "error",
-      {
-        "version": ">=14.0.0",
-        "ignores": ["modules"]
-      }
-    ]
-  }
+  "rules": {}
 }

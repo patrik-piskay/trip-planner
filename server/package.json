@@ -2,15 +2,16 @@
   "name": "travel-plans-server",
   "version": "0.1.0",
   "type": "module",
-  "main": "index.js",
+  "main": "src/index.js",
   "author": "Patrik Piskay <piskay.patrik@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
   },
   "scripts": {
-    "start": "nodemon index.js",
-    "lint": "eslint '**/*.js'"
+    "start": "nodemon src/index.js",
+    "lint": "eslint '**/*.js'",
+    "bootstrap:db": "rm db.sqlite && node scripts/initDb.js"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
@@ -25,7 +26,12 @@
     "nodemon": "^2.0.3"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^7.0.1",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "uuid": "^8.0.0"
   }
 }
