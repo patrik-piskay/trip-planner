@@ -1,5 +1,6 @@
 import express from 'express';
-import * as UserModel from '../models/User.js';
+import EV from 'express-validator';
+import * as UserModel from '../models/user.js';
 import auth from '../middleware/auth.js';
 import { errorHandler500 } from '../utils/errorHandling.js';
 
@@ -9,24 +10,37 @@ authRouter.post('/auth', auth, (req, res) => {
   res.status(200).send(UserModel.sanitizeUserObject(req.user));
 });
 
-authRouter.post('/auth/login', (req, res) => {
-  // login a registered user
+authRouter.post(
+  '/auth/login',
+  [
+    EV.check('username').trim().notEmpty().withMessage('field is required'),
+    EV.check('password').notEmpty().withMessage('field is required'),
+  ],
+  (req, res) => {
+    // login a registered user
 
-  try {
-    const { username = '', password = '' } = req.body;
-    const user = UserModel.findByCredentials(username, password);
+    const validationErrors = EV.validationResult(req);
 
-    if (!user) {
-      return res.status(401).send({ error: 'Invalid login credentials' });
+    if (!validationErrors.isEmpty()) {
+      return res.status(400).send({ errors: validationErrors.array() });
     }
 
-    const token = UserModel.generateAuthToken(user);
+    try {
+      const { username, password } = req.body;
+      const user = UserModel.findByCredentials(username, password);
 
-    res.status(200).send({ user: UserModel.sanitizeUserObject(user), token });
-  } catch (error) {
-    errorHandler500(error, res);
-  }
-});
+      if (!user) {
+        return res.status(401).send({ error: 'Invalid login credentials' });
+      }
+
+      const token = UserModel.generateAuthToken(user);
+
+      res.status(200).send({ user: UserModel.sanitizeUserObject(user), token });
+    } catch (error) {
+      errorHandler500(error, res);
+    }
+  },
+);
 
 authRouter.post('/auth/logout', auth, (req, res) => {
   // log user out of the application

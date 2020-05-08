@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import * as UserModel from '../models/User.js';
+import * as UserModel from '../models/user.js';
 
 const auth = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -23,6 +23,8 @@ const auth = (req, res, next) => {
 
     next();
   } catch (error) {
+    console.log(error);
+
     res.status(401).send({ error: 'Not authorized to access this resource' });
   }
 };

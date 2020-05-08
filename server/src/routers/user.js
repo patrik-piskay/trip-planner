@@ -1,44 +1,48 @@
 import express from 'express';
-import * as UserModel from '../models/User.js';
+import EV from 'express-validator';
+import * as UserModel from '../models/user.js';
 import auth from '../middleware/auth.js';
 import { errorHandler500 } from '../utils/errorHandling.js';
 
 const userRouter = express.Router();
 
-userRouter.post('/users', (req, res) => {
-  // create a new user
+userRouter.post(
+  '/users',
+  [
+    EV.check('username').trim().notEmpty().withMessage('field is required'),
+    EV.check('password')
+      .notEmpty()
+      .withMessage('field is required')
+      .bail()
+      .isLength({ min: 6 })
+      .withMessage('password needs to be at least 6 characters long'),
+    EV.check('name').trim().notEmpty().withMessage('field is required'),
+  ],
+  (req, res) => {
+    // create a new user
 
-  try {
-    const { username, name, password, role_id = UserModel.ROLE.USER } = req.body;
+    const validationErrors = EV.validationResult(req);
 
-    const errors = {};
-
-    if (!username?.trim()) {
-      errors.username = 'field is required';
+    if (!validationErrors.isEmpty()) {
+      return res.status(400).send({ errors: validationErrors.array() });
     }
-    if (!name?.trim()) {
-      errors.name = 'field is required';
-    }
-    if (!password?.trim()) {
-      errors.password = 'field is required';
-    }
 
-    if (Object.keys(errors).length) {
-      return res.status(400).send({ error: errors });
+    try {
+      const { username, name, password, role_id = UserModel.ROLE.USER } = req.body;
+
+      const user = UserModel.createUser({
+        username,
+        name,
+        password,
+        role_id,
+      });
+
+      res.status(201).send(UserModel.sanitizeUserObject(user));
+    } catch (error) {
+      errorHandler500(error, res);
     }
-
-    const user = UserModel.createUser({
-      username,
-      name,
-      password,
-      role_id,
-    });
-
-    res.status(201).send(UserModel.sanitizeUserObject(user));
-  } catch (error) {
-    errorHandler500(error, res);
-  }
-});
+  },
+);
 
 userRouter.get('/users', auth, (req, res) => {
   // get all users
@@ -80,53 +84,53 @@ userRouter.get('/users/:id', auth, (req, res) => {
   }
 });
 
-userRouter.patch('/users/:id', auth, (req, res) => {
-  // edit user profile
+userRouter.patch(
+  '/users/:id',
+  auth,
+  [
+    EV.check('name').optional().trim().notEmpty().withMessage('field cannot be empty'),
+    EV.check('password')
+      .optional()
+      .isLength({ min: 6 })
+      .withMessage('password needs to be at least 6 characters long'),
+  ],
+  (req, res) => {
+    // edit user profile
 
-  const userId = req.params.id;
+    const validationErrors = EV.validationResult(req);
 
-  if (req.user.id !== userId && req.user.role_id === UserModel.ROLE.USER) {
-    // forbidden
-    return res.status(403).send();
-  }
-
-  const { name, password, role_id } = req.body;
-
-  const errors = {};
-
-  if (name && !name.trim()) {
-    errors.name = 'field cannot be empty';
-  }
-  if (password && !password.trim()) {
-    errors.password = 'field cannot be empty';
-  }
-
-  if (Object.keys(errors).length) {
-    return res.status(400).send({ error: errors });
-  }
-
-  try {
-    const user = UserModel.getUserById(userId);
-
-    if (user.archived_at) {
-      return res.status(404).send({ error: 'Not found' });
+    if (!validationErrors.isEmpty()) {
+      return res.status(400).send({ errors: validationErrors.array() });
     }
 
-    const updatedUser = UserModel.updateUser(userId, {
-      name,
-      password,
-      role_id,
-    });
+    const userId = req.params.id;
 
-    if (updatedUser) {
+    if (req.user.id !== userId && req.user.role_id === UserModel.ROLE.USER) {
+      // forbidden
+      return res.status(403).send();
+    }
+
+    const { name, password, role_id } = req.body;
+
+    try {
+      const user = UserModel.getUserById(userId);
+
+      if (!user || user.archived_at) {
+        return res.status(404).send({ error: 'Not found' });
+      }
+
+      const updatedUser = UserModel.updateUser(userId, {
+        name,
+        password,
+        role_id,
+      });
+
       res.status(200).send(UserModel.sanitizeUserObject(updatedUser));
-    } else {
-      res.status(404).send({ error: 'Not found' });
+    } catch (error) {
+      errorHandler500(error, res);
     }
-  } catch (error) {
-    errorHandler500(error, res);
-  }
-});
+  },
+);
 
 userRouter.delete('/users/:id', auth, (req, res) => {
   // delete user profile

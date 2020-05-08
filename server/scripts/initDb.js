@@ -26,11 +26,11 @@ try {
   queryRun(`INSERT INTO user_roles (name) VALUES ('Admin');`);
 
   queryRun(`CREATE TABLE trips (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT PRIMARY KEY,
     user_id TEXT,
     destination TEXT,
-    start_date DATE,
-    end_date DATE,
+    start_date TEXT,
+    end_date TEXT,
     comment TEXT,
     created_at DATETIME DEFAULT (strftime('%s', 'now')),
     archived_at DATETIME DEFAULT NULL,

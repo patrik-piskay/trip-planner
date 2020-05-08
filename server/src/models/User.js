@@ -27,7 +27,7 @@ export function findByCredentials(username, password) {
     return null;
   }
 
-  if (!bcrypt.compare(password, user.password)) {
+  if (!bcrypt.compareSync(password, user.password)) {
     return null;
   }
 
@@ -79,7 +79,12 @@ export function updateUser(userId, userData) {
     (toUpdate, column) => {
       if (typeof userData[column] !== 'undefined' && userData[column] !== null) {
         toUpdate.columns.push(column);
-        toUpdate.values.push(userData[column]);
+
+        if (column === 'password') {
+          toUpdate.values.push(bcrypt.hashSync(userData.password, 8));
+        } else {
+          toUpdate.values.push(userData[column]);
+        }
       }
 
       return toUpdate;
@@ -102,7 +107,10 @@ export function updateUser(userId, userData) {
 }
 
 export function deleteUser(userId) {
-  return queryRun(`UPDATE users SET archived_at = strftime('%s', 'now') WHERE id = ?`, [userId]);
+  return queryRun(
+    `UPDATE users SET archived_at = strftime('%s', 'now') WHERE id = ? AND archived_at = NULL`,
+    [userId],
+  );
 }
 
 export function getAllUsers() {
