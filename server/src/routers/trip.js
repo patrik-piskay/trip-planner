@@ -3,7 +3,7 @@ import EV from 'express-validator';
 import * as UserModel from '../models/user.js';
 import * as TripModel from '../models/trip.js';
 import auth from '../middleware/auth.js';
-import { errorHandler500 } from '../utils/errorHandling.js';
+import { catchErrors } from '../handlers/errorHandlers.js';
 
 const tripRouted = express.Router();
 
@@ -31,7 +31,7 @@ tripRouted.post(
       .withMessage('date is in a wrong format. required format is YYYY/MM/DD'),
     EV.body('comment').trim(),
   ],
-  (req, res) => {
+  catchErrors((req, res) => {
     // create a new trip
 
     const validationErrors = EV.validationResult(req);
@@ -54,54 +54,52 @@ tripRouted.post(
       return res.status(409).send({ error: `User ID '${userId}' does not exist` });
     }
 
-    try {
-      const trip = TripModel.createTrip({
-        user_id: userId,
-        destination,
-        start_date,
-        end_date,
-        comment,
-      });
+    const trip = TripModel.createTrip({
+      user_id: userId,
+      destination,
+      start_date,
+      end_date,
+      comment,
+    });
 
-      res.status(201).send(trip);
-    } catch (error) {
-      errorHandler500(error, res);
-    }
-  },
+    res.status(201).send(trip);
+  }),
 );
 
-tripRouted.get('/trips', auth, (req, res) => {
-  // get all trips
+tripRouted.get(
+  '/trips',
+  auth,
+  catchErrors((req, res) => {
+    // get all trips
 
-  if (req.user.role_id === UserModel.ROLE.USER_MANAGER) {
-    // forbidden
-    return res.status(403).send();
-  }
+    if (req.user.role_id === UserModel.ROLE.USER_MANAGER) {
+      // forbidden
+      return res.status(403).send();
+    }
 
-  const options = {};
+    const options = {};
 
-  if (req.user.role_id === UserModel.ROLE.USER) {
-    options.user_id = req.user.id;
-  }
+    if (req.user.role_id === UserModel.ROLE.USER) {
+      options.user_id = req.user.id;
+    }
 
-  try {
     const trips = TripModel.getAllTrips(options);
 
     res.status(200).send(trips);
-  } catch (error) {
-    errorHandler500(error, res);
-  }
-});
+  }),
+);
 
-tripRouted.get('/trips/:id', auth, (req, res) => {
-  // get trip detail
+tripRouted.get(
+  '/trips/:id',
+  auth,
+  catchErrors((req, res) => {
+    // get trip detail
 
-  if (![UserModel.ROLE.USER, UserModel.ROLE.ADMIN].includes(req.user.role_id)) {
-    // forbidden
-    return res.status(403).send();
-  }
+    if (![UserModel.ROLE.USER, UserModel.ROLE.ADMIN].includes(req.user.role_id)) {
+      // forbidden
+      return res.status(403).send();
+    }
 
-  try {
     const tripId = req.params.id;
     const trip = TripModel.getTripById(tripId);
 
@@ -115,10 +113,8 @@ tripRouted.get('/trips/:id', auth, (req, res) => {
     } else {
       res.status(404).send({ error: 'Not found' });
     }
-  } catch (error) {
-    errorHandler500(error, res);
-  }
-});
+  }),
+);
 
 tripRouted.patch(
   '/trips/:id',
@@ -141,7 +137,7 @@ tripRouted.patch(
       .withMessage('date is in a wrong format. required format is YYYY/MM/DD'),
     EV.body('comment').optional().trim(),
   ],
-  (req, res) => {
+  catchErrors((req, res) => {
     // edit trip detail
 
     const validationErrors = EV.validationResult(req);
@@ -158,43 +154,41 @@ tripRouted.patch(
     const tripId = req.params.id;
     const { destination, start_date, end_date, comment } = req.body;
 
-    try {
-      const trip = TripModel.getTripById(tripId);
+    const trip = TripModel.getTripById(tripId);
 
-      if (!trip || trip.archived_at) {
-        return res.status(404).send({ error: 'Not found' });
-      }
-
-      if (req.user.role_id === UserModel.ROLE.USER && trip.user_id !== req.user.id) {
-        // forbidden
-        return res.status(403).send();
-      }
-
-      const updatedTrip = TripModel.updateTrip(tripId, {
-        destination,
-        start_date,
-        end_date,
-        comment,
-      });
-
-      res.status(200).send(updatedTrip);
-    } catch (error) {
-      errorHandler500(error, res);
+    if (!trip || trip.archived_at) {
+      return res.status(404).send({ error: 'Not found' });
     }
-  },
+
+    if (req.user.role_id === UserModel.ROLE.USER && trip.user_id !== req.user.id) {
+      // forbidden
+      return res.status(403).send();
+    }
+
+    const updatedTrip = TripModel.updateTrip(tripId, {
+      destination,
+      start_date,
+      end_date,
+      comment,
+    });
+
+    res.status(200).send(updatedTrip);
+  }),
 );
 
-tripRouted.delete('/trips/:id', auth, (req, res) => {
-  // delete trip detail
+tripRouted.delete(
+  '/trips/:id',
+  auth,
+  catchErrors((req, res) => {
+    // delete trip detail
 
-  if (![UserModel.ROLE.USER, UserModel.ROLE.ADMIN].includes(req.user.role_id)) {
-    // forbidden
-    return res.status(403).send();
-  }
+    if (![UserModel.ROLE.USER, UserModel.ROLE.ADMIN].includes(req.user.role_id)) {
+      // forbidden
+      return res.status(403).send();
+    }
 
-  const tripId = req.params.id;
+    const tripId = req.params.id;
 
-  try {
     const trip = TripModel.getTripById(tripId);
 
     if (!trip || trip.archived_at) {
@@ -209,9 +203,7 @@ tripRouted.delete('/trips/:id', auth, (req, res) => {
     TripModel.deleteTrip(tripId);
 
     res.status(204).send();
-  } catch (error) {
-    errorHandler500(error, res);
-  }
-});
+  }),
+);
 
 export default tripRouted;

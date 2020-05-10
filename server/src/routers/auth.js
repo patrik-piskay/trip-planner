@@ -2,7 +2,7 @@ import express from 'express';
 import EV from 'express-validator';
 import * as UserModel from '../models/user.js';
 import auth from '../middleware/auth.js';
-import { errorHandler500 } from '../utils/errorHandling.js';
+import { catchErrors } from '../handlers/errorHandlers.js';
 
 const authRouter = express.Router();
 
@@ -16,7 +16,7 @@ authRouter.post(
     EV.check('username').trim().notEmpty().withMessage('field is required'),
     EV.check('password').notEmpty().withMessage('field is required'),
   ],
-  (req, res) => {
+  catchErrors((req, res) => {
     // login a registered user
 
     const validationErrors = EV.validationResult(req);
@@ -25,27 +25,25 @@ authRouter.post(
       return res.status(400).send({ errors: validationErrors.array() });
     }
 
-    try {
-      const { username, password } = req.body;
-      const user = UserModel.findByCredentials(username, password);
+    const { username, password } = req.body;
+    const user = UserModel.findByCredentials(username, password);
 
-      if (!user) {
-        return res.status(401).send({ error: 'Invalid login credentials' });
-      }
-
-      const token = UserModel.generateAuthToken(user);
-
-      res.status(200).send({ user: UserModel.sanitizeUserObject(user), token });
-    } catch (error) {
-      errorHandler500(error, res);
+    if (!user) {
+      return res.status(401).send({ error: 'Invalid login credentials' });
     }
-  },
+
+    const token = UserModel.generateAuthToken(user);
+
+    res.status(200).send({ user: UserModel.sanitizeUserObject(user), token });
+  }),
 );
 
-authRouter.post('/auth/logout', auth, (req, res) => {
-  // log user out of the application
+authRouter.post(
+  '/auth/logout',
+  auth,
+  catchErrors((req, res) => {
+    // log user out of the application
 
-  try {
     const userTokens = JSON.parse(req.user.tokens);
     const newTokens = userTokens.filter((token) => {
       return token !== req.token;
@@ -56,9 +54,7 @@ authRouter.post('/auth/logout', auth, (req, res) => {
     });
 
     res.send();
-  } catch (error) {
-    errorHandler500(error, res);
-  }
-});
+  }),
+);
 
 export default authRouter;
