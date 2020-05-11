@@ -1,4 +1,5 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import EV from 'express-validator';
 import * as UserModel from '../models/user.js';
 import auth from '../middleware/auth.js';
@@ -29,23 +30,29 @@ userRouter.post(
 
     const { username, name, password, role_id = UserModel.ROLE.USER } = req.body;
 
-    if (
-      role_id !== UserModel.ROLE.USER &&
-      ![UserModel.ROLE.USER_MANAGER, UserModel.ROLE.ADMIN].includes(req.user?.role_id)
-    ) {
+    let user;
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (token) {
+      try {
+        const data = jwt.verify(token, process.env.JWT_KEY);
+        user = UserModel.getUserById(data.userId);
+      } catch (e) {}
+    }
+
+    if (role_id !== UserModel.ROLE.USER && user?.role_id !== UserModel.ROLE.ADMIN) {
       return res
         .status(403)
         .send({ error: 'Not authorized to create a user with advanced permission levels' });
     }
 
-    const user = UserModel.createUser({
+    const newUser = UserModel.createUser({
       username,
       name,
       password,
       role_id,
     });
 
-    res.status(201).send(UserModel.sanitizeUserObject(user));
+    res.status(201).send(UserModel.sanitizeUserObject(newUser));
   }),
 );
 
@@ -60,7 +67,13 @@ userRouter.get(
       return res.status(403).send();
     }
 
-    const users = UserModel.getAllUsers();
+    const options = {};
+
+    if (req.user.role_id === UserModel.ROLE.USER_MANAGER) {
+      options.role_id = UserModel.ROLE.USER;
+    }
+
+    const users = UserModel.getAllUsers(options);
 
     res.status(200).send(users.map(UserModel.sanitizeUserObject));
   }),
@@ -82,6 +95,13 @@ userRouter.get(
     const user = UserModel.getUserById(userId);
 
     if (user) {
+      if (req.user.role_id === UserModel.ROLE.USER_MANAGER) {
+        if (req.user.id !== userId && user.role_id !== UserModel.ROLE.USER) {
+          // forbidden
+          return res.status(403).send();
+        }
+      }
+
       res.status(200).send(UserModel.sanitizeUserObject(user));
     } else {
       res.status(404).send({ error: 'Not found' });
@@ -122,11 +142,15 @@ userRouter.patch(
       return res.status(404).send({ error: 'Not found' });
     }
 
-    if (
-      role_id !== user.role_id &&
-      ![UserModel.ROLE.USER_MANAGER, UserModel.ROLE.ADMIN].includes(user.role_id)
-    ) {
+    if (role_id && role_id !== user.role_id && ![UserModel.ROLE.ADMIN].includes(user.role_id)) {
       return res.status(403).send({ error: 'Not authorized to change user permission levels' });
+    }
+
+    if (req.user.role_id === UserModel.ROLE.USER_MANAGER) {
+      if (req.user.id !== userId && user.role_id !== UserModel.ROLE.USER) {
+        // forbidden
+        return res.status(403).send();
+      }
     }
 
     const updatedUser = UserModel.updateUser(userId, {
@@ -150,6 +174,24 @@ userRouter.delete(
     if (req.user.role_id === UserModel.ROLE.USER) {
       // forbidden
       return res.status(403).send();
+    }
+
+    if (req.user.id === userId) {
+      // forbidden
+      return res.status(403).send({ error: 'Cannot delete your own user' });
+    }
+
+    const user = UserModel.getUserById(userId);
+
+    if (!user) {
+      res.status(404).send({ error: 'Not found' });
+    }
+
+    if (req.user.role_id === UserModel.ROLE.USER_MANAGER) {
+      if (user.role_id !== UserModel.ROLE.USER) {
+        // forbidden
+        return res.status(403).send();
+      }
     }
 
     const info = UserModel.deleteUser(userId);

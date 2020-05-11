@@ -1,6 +1,9 @@
 # dependencies
 node_modules
 
+# db
+db.sqlite
+
 # next.js
 /client/.next/
 /client/out/

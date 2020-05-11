@@ -10,10 +10,11 @@ export const ROLE = {
 };
 
 export function sanitizeUserObject(user) {
-  delete user.password;
-  delete user.tokens;
+  const copyUser = { ...user };
+  delete copyUser.password;
+  delete copyUser.tokens;
 
-  return user;
+  return copyUser;
 }
 
 export function getUserById(id) {
@@ -108,11 +109,21 @@ export function updateUser(userId, userData) {
 
 export function deleteUser(userId) {
   return queryRun(
-    `UPDATE users SET archived_at = strftime('%s', 'now') WHERE id = ? AND archived_at = NULL`,
+    `UPDATE users SET archived_at = strftime('%s', 'now') WHERE id = ? AND archived_at IS NULL`,
     [userId],
   );
 }
 
-export function getAllUsers() {
-  return queryAll(`SELECT * FROM users WHERE archived_at IS NULL ORDER BY created_at DESC`);
+export function getAllUsers(whereOpts) {
+  const where = Object.entries(whereOpts)
+    .map(([column, value]) => {
+      return `${column} = ?`;
+    })
+    .join(' AND ');
+
+  return queryAll(
+    `SELECT * FROM users WHERE archived_at IS NULL ${where && `AND ${where}`}
+  ORDER BY created_at DESC`,
+    [...Object.values(whereOpts)],
+  );
 }

@@ -15,7 +15,10 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+}
 
 app.use(authRouter);
 app.use(userRouter);
@@ -26,9 +29,10 @@ app.get('/ping', (req, res) => {
 });
 
 app.use(errorHandlers.notFound);
-
 app.use(errorHandlers.errorHandler);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+export default app;

@@ -8,12 +8,20 @@
   "engines": {
     "node": ">=14.0.0"
   },
+  "ava": {
+    "files": [
+      "**/*.test.js"
+    ],
+    "concurrency": 1
+  },
   "scripts": {
     "start": "nodemon src/index.js",
+    "test": "ava",
     "lint": "eslint '**/*.js'",
     "bootstrap:db": "rm db.sqlite && node scripts/initDb.js"
   },
   "devDependencies": {
+    "ava": "^3.8.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-config-react-app": "^5.2.1",
@@ -23,7 +31,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^4.0.0",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.3",
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -33,7 +42,9 @@
     "express": "^4.17.1",
     "express-validator": "^6.4.1",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
     "morgan": "^1.10.0",
-    "uuid": "^8.0.0"
+    "uuid": "^8.0.0",
+    "validator": "^13.0.0"
   }
 }

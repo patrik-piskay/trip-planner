@@ -18,7 +18,9 @@ export const notFound = (req, res, next) => {
 export const errorHandler = (error, req, res, next) => {
   const message = !error.status || error.status === 500 ? 'Internal server error' : error.message;
 
-  console.error(error);
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(error);
+  }
 
   res.status(error.status || 500).send({
     error: message,

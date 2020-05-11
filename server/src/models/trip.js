@@ -1,4 +1,3 @@
-import bcrypt from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
 import { queryOne, queryRun, queryAll } from '../db/db.js';
 

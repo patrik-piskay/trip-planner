@@ -7,5 +7,12 @@
   "env": {
     "node": true
   },
-  "rules": {}
+  "rules": {
+    "node/no-unpublished-import": [
+      "error",
+      {
+        "allowModules": ["supertest", "ava"]
+      }
+    ]
+  }
 }

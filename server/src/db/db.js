@@ -1,6 +1,12 @@
 import sqlite3 from 'better-sqlite3';
 
-const db = sqlite3('db.sqlite');
+export const dbFilePath = process.env.NODE_ENV !== 'test' ? 'db.sqlite' : 'tests/test-db.sqlite';
+let db = sqlite3(dbFilePath);
+
+// for testing only
+export function refreshDbConnection() {
+  db = sqlite3(dbFilePath);
+}
 
 export function queryAll(sql, params = []) {
   const stmt = db.prepare(sql);
