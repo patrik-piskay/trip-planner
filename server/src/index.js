@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 
 import authRouter from './routers/auth.js';
+import roleRouter from './routers/role.js';
 import userRouter from './routers/user.js';
 import tripRouter from './routers/trip.js';
 import * as errorHandlers from './handlers/errorHandlers.js';
@@ -21,6 +22,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 app.use(authRouter);
+app.use(roleRouter);
 app.use(userRouter);
 app.use(tripRouter);
 

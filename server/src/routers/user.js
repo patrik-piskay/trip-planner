@@ -197,7 +197,7 @@ userRouter.delete(
     const info = UserModel.deleteUser(userId);
 
     if (info.changes) {
-      res.status(204).send();
+      res.status(204).send({});
     } else {
       res.status(404).send({ error: 'Not found' });
     }

@@ -53,7 +53,7 @@ authRouter.post(
       tokens: JSON.stringify(newTokens),
     });
 
-    res.send();
+    res.status(204).send({});
   }),
 );
 

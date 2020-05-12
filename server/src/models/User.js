@@ -21,6 +21,10 @@ export function getUserById(id) {
   return queryOne('SELECT * FROM users WHERE id = ?', [id]);
 }
 
+export function getAllRoles(id) {
+  return queryAll('SELECT * FROM user_roles');
+}
+
 export function findByCredentials(username, password) {
   const user = queryOne('SELECT * FROM users WHERE username = ?', [username]);
 

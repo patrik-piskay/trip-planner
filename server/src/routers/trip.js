@@ -202,7 +202,7 @@ tripRouted.delete(
 
     TripModel.deleteTrip(tripId);
 
-    res.status(204).send();
+    res.status(204).send({});
   }),
 );
 
