@@ -109,7 +109,7 @@ userRouter.get(
   }),
 );
 
-userRouter.patch(
+userRouter.put(
   '/users/:id',
   auth,
   [

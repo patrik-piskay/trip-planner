@@ -18,7 +18,7 @@
     "start": "nodemon src/index.js",
     "test": "ava",
     "lint": "eslint '**/*.js'",
-    "bootstrap:db": "rm db.sqlite && node scripts/initDb.js"
+    "bootstrapDb": "rm db.sqlite && node scripts/initDb.js"
   },
   "devDependencies": {
     "ava": "^3.8.2",

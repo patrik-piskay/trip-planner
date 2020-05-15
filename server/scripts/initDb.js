@@ -25,6 +25,10 @@ try {
   queryRun(`INSERT INTO user_roles (name) VALUES ('User manager');`);
   queryRun(`INSERT INTO user_roles (name) VALUES ('Admin');`);
 
+  queryRun(
+    `INSERT INTO users (id, username, password, name, role_id, tokens) VALUES ('8c0e5937-8c52-4f54-a3d3-f15652873bf7', 'admin', '$2a$08$l0WQbrswY4MiqGjIFPru/u2bNSDMdxAvaAFwa6ADUlAz522LouUPu', 'Admin', 3, '[]');`,
+  );
+
   queryRun(`CREATE TABLE trips (
     id TEXT PRIMARY KEY,
     user_id TEXT,

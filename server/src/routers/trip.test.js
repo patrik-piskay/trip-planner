@@ -178,9 +178,9 @@ test.serial('GET /trips/:id - role ADMIN', async (t) => {
   t.deepEqual(res.body, dummyData.allTrips['fdbee3b8-44bd-4250-bb83-bd06e90427a9']);
 });
 
-test.serial('PATCH /trips/:id - invalid token', async (t) => {
+test.serial('PUT /trips/:id - invalid token', async (t) => {
   const res = await t.context.server
-    .patch('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
+    .put('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
     .set({
       Authorization: 'Bearer invalid_token',
     })
@@ -189,9 +189,9 @@ test.serial('PATCH /trips/:id - invalid token', async (t) => {
   t.is(res.status, 401);
 });
 
-test.serial('PATCH /trips/:id - 404', async (t) => {
+test.serial('PUT /trips/:id - 404', async (t) => {
   const res = await t.context.server
-    .patch('/trips/404')
+    .put('/trips/404')
     .set({
       Authorization: `Bearer ${user1token}`,
     })
@@ -200,9 +200,9 @@ test.serial('PATCH /trips/:id - 404', async (t) => {
   t.is(res.status, 404);
 });
 
-test.serial('PATCH /trips/:id - role USER - owner - incorrect data', async (t) => {
+test.serial('PUT /trips/:id - role USER - owner - incorrect data', async (t) => {
   const res = await t.context.server
-    .patch('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
+    .put('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
     .set({
       Authorization: `Bearer ${user1token}`,
     })
@@ -217,9 +217,9 @@ test.serial('PATCH /trips/:id - role USER - owner - incorrect data', async (t) =
   t.is(res.body.errors.length, 3);
 });
 
-test.serial('PATCH /trips/:id - role USER - owner - correct data', async (t) => {
+test.serial('PUT /trips/:id - role USER - owner - correct data', async (t) => {
   const res = await t.context.server
-    .patch('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
+    .put('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
     .set({
       Authorization: `Bearer ${user1token}`,
     })
@@ -240,9 +240,9 @@ test.serial('PATCH /trips/:id - role USER - owner - correct data', async (t) => 
   });
 });
 
-test.serial('PATCH /trips/:id - role USER - not the owner', async (t) => {
+test.serial('PUT /trips/:id - role USER - not the owner', async (t) => {
   const res = await t.context.server
-    .patch('/trips/1c29b408-8e9e-4061-b172-6dad36afcd66')
+    .put('/trips/1c29b408-8e9e-4061-b172-6dad36afcd66')
     .set({
       Authorization: `Bearer ${user1token}`,
     })
@@ -257,9 +257,9 @@ test.serial('PATCH /trips/:id - role USER - not the owner', async (t) => {
   t.deepEqual(res.body, {});
 });
 
-test.serial('PATCH /trips/:id - role USER MANAGER', async (t) => {
+test.serial('PUT /trips/:id - role USER MANAGER', async (t) => {
   const res = await t.context.server
-    .patch('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
+    .put('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
     .set({
       Authorization: `Bearer ${userManagerToken}`,
     })
@@ -274,9 +274,9 @@ test.serial('PATCH /trips/:id - role USER MANAGER', async (t) => {
   t.deepEqual(res.body, {});
 });
 
-test.serial('PATCH /trips/:id - role ADMIN', async (t) => {
+test.serial('PUT /trips/:id - role ADMIN', async (t) => {
   const res = await t.context.server
-    .patch('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
+    .put('/trips/fdbee3b8-44bd-4250-bb83-bd06e90427a9')
     .set({
       Authorization: `Bearer ${adminToken}`,
     })

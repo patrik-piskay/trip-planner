@@ -5,13 +5,13 @@ import * as TripModel from '../models/trip.js';
 import auth from '../middleware/auth.js';
 import { catchErrors } from '../handlers/errorHandlers.js';
 
-const tripRouted = express.Router();
+const tripRouter = express.Router();
 
 const dateValidator = (value) => {
   return value.match(/^\d{4}\/\d{2}\/\d{2}$/);
 };
 
-tripRouted.post(
+tripRouter.post(
   '/trips',
   auth,
   [
@@ -66,7 +66,7 @@ tripRouted.post(
   }),
 );
 
-tripRouted.get(
+tripRouter.get(
   '/trips',
   auth,
   catchErrors((req, res) => {
@@ -89,7 +89,7 @@ tripRouted.get(
   }),
 );
 
-tripRouted.get(
+tripRouter.get(
   '/trips/:id',
   auth,
   catchErrors((req, res) => {
@@ -116,7 +116,7 @@ tripRouted.get(
   }),
 );
 
-tripRouted.patch(
+tripRouter.put(
   '/trips/:id',
   auth,
   [
@@ -176,7 +176,7 @@ tripRouted.patch(
   }),
 );
 
-tripRouted.delete(
+tripRouter.delete(
   '/trips/:id',
   auth,
   catchErrors((req, res) => {
@@ -206,4 +206,4 @@ tripRouted.delete(
   }),
 );
 
-export default tripRouted;
+export default tripRouter;

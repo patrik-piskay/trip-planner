@@ -252,9 +252,9 @@ test.serial('GET /users/:id - role ADMIN', async (t) => {
   );
 });
 
-test.serial('PATCH /users/:id - invalid token', async (t) => {
+test.serial('PUT /users/:id - invalid token', async (t) => {
   const res = await t.context.server
-    .patch('/users/3dade573-e975-4abf-a711-ba3338acf547')
+    .put('/users/3dade573-e975-4abf-a711-ba3338acf547')
     .set({
       Authorization: 'Bearer invalid_token',
     })
@@ -263,9 +263,9 @@ test.serial('PATCH /users/:id - invalid token', async (t) => {
   t.is(res.status, 401);
 });
 
-test.serial('PATCH /users/:id - role USER - owner - incorrect data', async (t) => {
+test.serial('PUT /users/:id - role USER - owner - incorrect data', async (t) => {
   const res = await t.context.server
-    .patch('/users/3dade573-e975-4abf-a711-ba3338acf547')
+    .put('/users/3dade573-e975-4abf-a711-ba3338acf547')
     .set({
       Authorization: `Bearer ${user1token}`,
     })
@@ -278,9 +278,9 @@ test.serial('PATCH /users/:id - role USER - owner - incorrect data', async (t) =
   t.is(res.body.errors.length, 2);
 });
 
-test.serial('PATCH /users/:id - role USER - owner - incorrect data 2', async (t) => {
+test.serial('PUT /users/:id - role USER - owner - incorrect data 2', async (t) => {
   const res = await t.context.server
-    .patch('/users/3dade573-e975-4abf-a711-ba3338acf547')
+    .put('/users/3dade573-e975-4abf-a711-ba3338acf547')
     .set({
       Authorization: `Bearer ${user1token}`,
     })
@@ -293,9 +293,9 @@ test.serial('PATCH /users/:id - role USER - owner - incorrect data 2', async (t)
   t.deepEqual(res.body.errors[0].msg, 'password needs to be at least 6 characters long');
 });
 
-test.serial('PATCH /users/:id - role USER - owner - correct data', async (t) => {
+test.serial('PUT /users/:id - role USER - owner - correct data', async (t) => {
   const res = await t.context.server
-    .patch('/users/3dade573-e975-4abf-a711-ba3338acf547')
+    .put('/users/3dade573-e975-4abf-a711-ba3338acf547')
     .set({
       Authorization: `Bearer ${user1token}`,
     })
@@ -314,9 +314,9 @@ test.serial('PATCH /users/:id - role USER - owner - correct data', async (t) => 
   t.is(bcrypt.compareSync('pass123-edited', dbUser.password), true);
 });
 
-test.serial('PATCH /users/:id - role USER - not the owner', async (t) => {
+test.serial('PUT /users/:id - role USER - not the owner', async (t) => {
   const res = await t.context.server
-    .patch('/users/59ad5f8a-d284-47fa-a5d6-964ec0ba35fa')
+    .put('/users/59ad5f8a-d284-47fa-a5d6-964ec0ba35fa')
     .set({
       Authorization: `Bearer ${user1token}`,
     })
@@ -329,9 +329,9 @@ test.serial('PATCH /users/:id - role USER - not the owner', async (t) => {
   t.deepEqual(res.body, {});
 });
 
-test.serial('PATCH /users/:id - role USER MANAGER - user', async (t) => {
+test.serial('PUT /users/:id - role USER MANAGER - user', async (t) => {
   const res = await t.context.server
-    .patch('/users/3dade573-e975-4abf-a711-ba3338acf547')
+    .put('/users/3dade573-e975-4abf-a711-ba3338acf547')
     .set({
       Authorization: `Bearer ${userManagerToken}`,
     })
@@ -350,9 +350,9 @@ test.serial('PATCH /users/:id - role USER MANAGER - user', async (t) => {
   t.is(bcrypt.compareSync('pass123-edited', dbUser.password), true);
 });
 
-test.serial('PATCH /users/:id - role USER MANAGER - manager', async (t) => {
+test.serial('PUT /users/:id - role USER MANAGER - manager', async (t) => {
   const res = await t.context.server
-    .patch('/users/adbee3b8-44bd-4250-bb83-bd06e90427a9')
+    .put('/users/adbee3b8-44bd-4250-bb83-bd06e90427a9')
     .set({
       Authorization: `Bearer ${userManagerToken}`,
     })
@@ -365,9 +365,9 @@ test.serial('PATCH /users/:id - role USER MANAGER - manager', async (t) => {
   t.deepEqual(res.body, {});
 });
 
-test.serial('PATCH /users/:id - role ADMIN', async (t) => {
+test.serial('PUT /users/:id - role ADMIN', async (t) => {
   const res = await t.context.server
-    .patch('/users/adbee3b8-44bd-4250-bb83-bd06e90427a9')
+    .put('/users/adbee3b8-44bd-4250-bb83-bd06e90427a9')
     .set({
       Authorization: `Bearer ${adminToken}`,
     })
