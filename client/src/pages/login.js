@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Router, { useRouter } from 'next/router';
+import Link from 'next/link';
 import {
   Box,
   Flex,
@@ -18,6 +19,7 @@ import { setAuthToken } from '../utils/auth';
 import http from '../utils/http';
 
 function Login(props) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const router = useRouter();
   const usernameInputRef = useRef();
@@ -31,6 +33,7 @@ function Login(props) {
 
   const login = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     setLoginError(false);
 
     const username = usernameInputRef.current.value;
@@ -48,13 +51,23 @@ function Login(props) {
       router.replace('/');
     } catch (e) {
       setLoginError(true);
+      setIsSubmitting(false);
       usernameInputRef.current.focus();
     }
   };
 
   return (
     <Flex align="center" justify="center" w="100%" h="100%" bg="teal.500">
-      <Flex direction="column" justify="center" w="100%" maxW="400px" bg="white" p="4" rounded="md">
+      <Flex
+        direction="column"
+        justify="center"
+        w="100%"
+        maxW="400px"
+        bg="white"
+        p="4"
+        rounded="md"
+        boxShadow="0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);"
+      >
         <Text fontSize="2xl" textAlign="center">
           Sign in to Travel Plans
         </Text>
@@ -78,12 +91,28 @@ function Login(props) {
                 <Input type="password" id="password" ref={passwordInputRef} />
               </Box>
               <Box mt="8">
-                <Button width="100%" variantColor="teal" rightIcon="arrow-forward" type="submit">
+                <Button
+                  width="100%"
+                  variantColor="teal"
+                  rightIcon={!isSubmitting && 'arrow-forward'}
+                  type="submit"
+                  isLoading={isSubmitting}
+                  loadingText="Signing In"
+                >
                   Sign In
                 </Button>
               </Box>
             </FormControl>
           </form>
+          <Box mt="4">
+            <Link href="/register">
+              <a>
+                <Button width="100%" variantColor="teal" variant="ghost" size="sm">
+                  Create New Account
+                </Button>
+              </a>
+            </Link>
+          </Box>
         </Box>
       </Flex>
     </Flex>

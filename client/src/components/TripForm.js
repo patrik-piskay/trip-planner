@@ -19,10 +19,9 @@ const sortByNameAsc = (a, b) => (a.name < b.name ? -1 : 1);
 
 export default function TripForm({ trip, onSubmit, isSubmitting }) {
   const {
-    state: { user /*, allUsers*/ },
+    state: { user },
   } = useContext(StateContext);
 
-  // const allUsers = queryCache.getQueryData('users');
   const allUsers = useGetUsers();
 
   const [fieldValid, setFieldValid] = useState({

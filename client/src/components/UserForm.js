@@ -7,6 +7,7 @@ import {
   Select,
   FormLabel,
   FormHelperText,
+  Flex,
 } from '@chakra-ui/core';
 import { StateContext } from '../contexts/state';
 import { isAdmin } from '../utils/user';
@@ -132,34 +133,36 @@ export default function UserForm({ user, onSubmit, isSubmitting }) {
         </Box>
       </FormControl>
 
-      <FormControl isInvalid={!fieldValid.name}>
-        <Box mb="4">
-          <FormLabel htmlFor="name" isRequired>
-            Name
-          </FormLabel>
-          <Input type="text" id="name" defaultValue={user?.name} ref={nameRef} />
-        </Box>
-      </FormControl>
+      <Flex direction={user ? 'column' : 'column-reverse'}>
+        <FormControl isInvalid={!fieldValid.name}>
+          <Box mb="4">
+            <FormLabel htmlFor="name" isRequired>
+              Name
+            </FormLabel>
+            <Input type="text" id="name" defaultValue={user?.name} ref={nameRef} />
+          </Box>
+        </FormControl>
 
-      <FormControl isInvalid={!fieldValid.password}>
-        <Box mb="8">
-          <FormLabel htmlFor="password" isRequired={!user}>
-            Password
-          </FormLabel>
-          <Input type="password" id="password" ref={passwordRef} />
-          {user ? (
-            <FormHelperText id="email-helper-text">
-              If you don't want to change the password, leave this field empty
-            </FormHelperText>
-          ) : (
-            <FormHelperText id="email-helper-text">
-              Password needs to be at least 6 characters long
-            </FormHelperText>
-          )}
-        </Box>
-      </FormControl>
+        <FormControl isInvalid={!fieldValid.password}>
+          <Box mb="4">
+            <FormLabel htmlFor="password" isRequired={!user}>
+              Password
+            </FormLabel>
+            <Input type="password" id="password" ref={passwordRef} />
+            {user ? (
+              <FormHelperText id="email-helper-text">
+                If you don't want to change the password, leave this field empty
+              </FormHelperText>
+            ) : (
+              <FormHelperText id="email-helper-text">
+                Password needs to be at least 6 characters long
+              </FormHelperText>
+            )}
+          </Box>
+        </FormControl>
+      </Flex>
 
-      <Box textAlign="center">
+      <Box textAlign="center" mt="4">
         <Button
           variantColor="teal"
           type="submit"

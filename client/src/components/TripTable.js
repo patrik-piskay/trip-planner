@@ -3,13 +3,18 @@ import Link from 'next/link';
 import { Box, Button } from '@chakra-ui/core';
 import Table from './Table';
 import { StateContext } from '../contexts/state';
-import { useGetUsers } from '../hooks';
+import { useGetUsers, useTableSearch } from '../hooks';
 import { isAdmin, convertUsersToMap } from '../utils/user';
 
 export default function TripTable({ data }) {
   const {
-    state: { user /*, allUsers*/ },
+    state: { user },
   } = useContext(StateContext);
+  const { Search, data: filteredData } = useTableSearch(
+    data,
+    ['destination'],
+    'Search by destination',
+  );
 
   const allUsersArray = useGetUsers();
   const allUsers = convertUsersToMap(allUsersArray);
@@ -61,5 +66,10 @@ export default function TripTable({ data }) {
     },
   ].filter(Boolean);
 
-  return <Table data={data} columns={columns} />;
+  return (
+    <>
+      {Search}
+      <Table data={filteredData} noDataText="No trips found" columns={columns} />
+    </>
+  );
 }

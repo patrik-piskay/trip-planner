@@ -9,6 +9,7 @@ export default function Table(props) {
       showPagination={false}
       loading={false}
       pageSize={props.data.length}
+      noDataText={props.noDataText}
     />
   );
 }

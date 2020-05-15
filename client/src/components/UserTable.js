@@ -4,11 +4,17 @@ import { Box, Button, Badge } from '@chakra-ui/core';
 import Table from './Table';
 import { StateContext } from '../contexts/state';
 import { isAdmin } from '../utils/user';
+import { useTableSearch } from '../hooks';
 
 export default function UserTable({ data }) {
   const {
     state: { user, roles },
   } = useContext(StateContext);
+  const { Search, data: filteredData } = useTableSearch(
+    data,
+    ['username', 'name'],
+    'Search by name or username',
+  );
 
   const columns = [
     {
@@ -61,5 +67,10 @@ export default function UserTable({ data }) {
     },
   ].filter(Boolean);
 
-  return <Table data={data} columns={columns} />;
+  return (
+    <>
+      {Search}
+      <Table data={filteredData} noDataText="No users found" columns={columns} />
+    </>
+  );
 }

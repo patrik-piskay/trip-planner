@@ -69,6 +69,16 @@ export default function MyApp({ Component, pageProps }) {
                 word-break: break-word;
               }
             }
+
+            .rt-noData {
+              position: unset;
+              left: auto;
+              top: auto;
+              transform: none;
+              background: none;
+              text-align: center;
+              border-top: 1px solid rgba(0, 0, 0, 0.05);
+            }
           }
         `}
       />
