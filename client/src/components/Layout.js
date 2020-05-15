@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/core';
+import { Box, Flex } from '@chakra-ui/core';
 import Header from './Header';
 
 export default function Layout(props) {
@@ -25,9 +25,9 @@ export function PageHeader({ children }) {
 
 export function Title({ children }) {
   return (
-    <Text fontSize="2rem" color="teal.400" ml="5">
+    <Box fontSize="2rem" color="teal.400" ml="5">
       {children}
-    </Text>
+    </Box>
   );
 }
 

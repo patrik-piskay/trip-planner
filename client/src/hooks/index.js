@@ -23,7 +23,7 @@ export function useGetUsers() {
 }
 
 const Search = ({ searchText, setSearchText, placeholder }) => (
-  <InputGroup mt="-1.25rem" w="100%" maxW="350px" mb="5">
+  <InputGroup mt="-1rem" w="100%" maxW="350px" mb="5">
     <InputLeftElement children={<Icon name="search" color="gray.300" />} />
     <Input
       type="text"

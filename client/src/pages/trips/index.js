@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
-import { Box, Text, Button } from '@chakra-ui/core';
+import { Box, Flex, Text, Button, PseudoBox } from '@chakra-ui/core';
 import Layout, { PageHeader, Title, Actions, Body } from '../../components/Layout';
 import Error from '../../components/Error';
 import withAuth from '../../components/withAuth';
@@ -10,7 +10,7 @@ import { ROLE } from '../../constants';
 import { StateContext } from '../../contexts/state';
 import TripTable from '../../components/TripTable';
 import http from '../../utils/http';
-import { isAdmin } from '../../utils/user';
+import { isAdmin, isUser } from '../../utils/user';
 import { usePrint } from '../../hooks';
 
 function Trips() {
@@ -23,18 +23,37 @@ function Trips() {
   return (
     <Layout>
       <PageHeader>
-        <Title>{isAdmin(user) ? 'Trips' : 'My Trips'}</Title>
+        <Title>
+          {isAdmin(user) ? (
+            <Flex align="baseline">
+              <Box textDecor="underline" mr={4}>
+                Trips
+              </Box>
+              <Link href="/users">
+                <a>
+                  <PseudoBox fontSize="1.2rem" color="gray.500" _hover={{ color: 'teal.500' }}>
+                    Users
+                  </PseudoBox>
+                </a>
+              </Link>
+            </Flex>
+          ) : (
+            'My Trips'
+          )}
+        </Title>
         <Actions>
-          <Button
-            variantColor="teal"
-            variant="outline"
-            mr="4"
-            isLoading={isPreparingPrint}
-            loadingText="Preparing for print"
-            onClick={() => setIsPreparingPrint(true)}
-          >
-            Print 30-day plan
-          </Button>
+          {isUser(user) && (
+            <Button
+              variantColor="teal"
+              variant="outline"
+              mr="4"
+              isLoading={isPreparingPrint}
+              loadingText="Preparing for print"
+              onClick={() => setIsPreparingPrint(true)}
+            >
+              Print 30-day plan
+            </Button>
+          )}
           <Link href="/trips/new">
             <a>
               <Button variantColor="teal">New Trip</Button>
