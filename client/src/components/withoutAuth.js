@@ -14,7 +14,7 @@ export default function withoutAuth(Component) {
       } else {
         router.replace('/');
       }
-    }, [token, router]);
+    }, [token]);
 
     return isLoggedIn === false ? <Component {...props} /> : null;
   };

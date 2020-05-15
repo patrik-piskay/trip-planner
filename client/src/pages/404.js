@@ -1,17 +1,17 @@
 import React from 'react';
 import { FaTimesCircle } from 'react-icons/fa';
 import { Box, Text } from '@chakra-ui/core';
-import Layout from '../components/Layout';
+import Layout, { Body } from '../components/Layout';
 
 export default function Custom404() {
   return (
     <Layout>
-      <Box d="flex" flexDirection="column" flex="1" alignItems="center" justifyContent="center">
-        <Box d="flex" alignItems="center">
-          <Box as={FaTimesCircle} color="teal" size="40px" mr="4" />
+      <Body>
+        <Box mt="48" d="flex" justifyContent="center" alignItems="center">
+          <Box as={FaTimesCircle} color="gray.600" size="40px" mr="4" />
           <Text fontSize="xl">404 - Page Not Found</Text>
         </Box>
-      </Box>
+      </Body>
     </Layout>
   );
 }

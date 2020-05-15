@@ -42,25 +42,25 @@ export default {
   get(path, opts) {
     return customFetch(path, {
       ...opts,
-      method: 'get',
+      method: 'GET',
     });
   },
   post(path, opts) {
     return customFetch(path, {
       ...opts,
-      method: 'post',
+      method: 'POST',
     });
   },
-  patch(path, opts) {
+  put(path, opts) {
     return customFetch(path, {
       ...opts,
-      method: 'patch',
+      method: 'PUT',
     });
   },
   delete(path, opts) {
     return customFetch(path, {
       ...opts,
-      method: 'delete',
+      method: 'DELETE',
     });
   },
 };

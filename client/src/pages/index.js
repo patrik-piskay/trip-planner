@@ -1,4 +1,4 @@
-import { useLayoutEffect, useContext } from 'react';
+import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import { StateContext } from '../contexts/state';
 

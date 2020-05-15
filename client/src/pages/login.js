@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect, useRef } from 'react';
+import Router, { useRouter } from 'next/router';
 import {
   Box,
   Flex,
@@ -15,18 +15,18 @@ import {
 
 import withoutAuth from '../components/withoutAuth';
 import { setAuthToken } from '../utils/auth';
-import { StateContext } from '../contexts/state';
 import http from '../utils/http';
 
 function Login(props) {
   const [loginError, setLoginError] = useState(false);
-  const { setAppState } = useContext(StateContext);
   const router = useRouter();
   const usernameInputRef = useRef();
   const passwordInputRef = useRef();
 
   useEffect(() => {
     usernameInputRef.current.focus();
+
+    Router.prefetch('/trips');
   }, []);
 
   const login = async (e) => {
@@ -37,14 +37,13 @@ function Login(props) {
     const password = passwordInputRef.current.value;
 
     try {
-      const { user, token } = await http.post('/auth/login', {
+      const { token } = await http.post('/auth/login', {
         body: {
           username,
           password,
         },
       });
 
-      setAppState({ user });
       setAuthToken(token);
       router.replace('/');
     } catch (e) {
@@ -54,8 +53,8 @@ function Login(props) {
   };
 
   return (
-    <Flex align="center" justify="center" w="100%" h="100%" bg="gray.300">
-      <Flex direction="column" justify="center" w="50%" bg="white" p="4" rounded="md">
+    <Flex align="center" justify="center" w="100%" h="100%" bg="teal.500">
+      <Flex direction="column" justify="center" w="100%" maxW="400px" bg="white" p="4" rounded="md">
         <Text fontSize="2xl" textAlign="center">
           Sign in to Travel Plans
         </Text>

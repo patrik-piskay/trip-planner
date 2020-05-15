@@ -1,46 +1,57 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
-import { Box, Text, Button, Flex } from '@chakra-ui/core';
-import Layout from '../../components/Layout';
+import { Box, Text, Button } from '@chakra-ui/core';
+import Layout, { PageHeader, Title, Actions, Body } from '../../components/Layout';
+import Error from '../../components/Error';
 import withAuth from '../../components/withAuth';
 import withPermissions from '../../components/withPermissions';
 import { ROLE } from '../../constants';
+import { StateContext } from '../../contexts/state';
 import TripTable from '../../components/TripTable';
 import http from '../../utils/http';
+import { isAdmin } from '../../utils/user';
 
 function Trips() {
+  const {
+    state: { user },
+  } = useContext(StateContext);
   const { status, data, error } = useQuery('trips', () => http.get('/trips'));
 
   return (
     <Layout>
-      <Box>
-        <Flex align="center" justify="space-between">
-          <Text fontSize="2rem" color="teal.400" ml="5">
-            My Trips
-          </Text>
+      <PageHeader>
+        <Title>{isAdmin(user) ? 'Trips' : 'My Trips'}</Title>
+        <Actions>
           <Link href="/trips/new">
-            <Button variantColor="teal">New Trip</Button>
+            <a>
+              <Button variantColor="teal">New Trip</Button>
+            </a>
           </Link>
-        </Flex>
-        <Box mt="6">
-          {status === 'loading' ? (
-            <Box textAlign="center" mt="32">
-              <Text color="gray.400" fontSize="xl">
-                Loading...
-              </Text>
-            </Box>
-          ) : data.length ? (
+        </Actions>
+      </PageHeader>
+
+      <Body>
+        {status === 'loading' ? (
+          <Box textAlign="center" mt="32">
+            <Text color="gray.400" fontSize="xl">
+              Loading...
+            </Text>
+          </Box>
+        ) : error ? (
+          <Error error={error} />
+        ) : data.length ? (
+          <Box maxWidth="1000px" m="0 auto">
             <TripTable data={data} />
-          ) : (
-            <Box textAlign="center" mt="32">
-              <Text color="gray.400" fontSize="xl">
-                No trips found
-              </Text>
-            </Box>
-          )}
-        </Box>
-      </Box>
+          </Box>
+        ) : (
+          <Box textAlign="center" mt="32">
+            <Text color="gray.400" fontSize="xl">
+              No trips found
+            </Text>
+          </Box>
+        )}
+      </Body>
     </Layout>
   );
 }

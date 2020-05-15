@@ -1,7 +1,7 @@
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
+import { queryCache } from 'react-query';
 
-import withAuth from '../components/withAuth';
 import { setAuthToken } from '../utils/auth';
 import http from '../utils/http';
 import { StateContext, initialState } from '../contexts/state';
@@ -11,14 +11,15 @@ function Logout(props) {
   const router = useRouter();
 
   useEffect(() => {
-    http.post('/auth/logout').then(() => {
-      setAuthToken('');
-      setAppState(initialState);
-      router.push('/');
-    });
-  }, [setAppState, router]);
+    http.post('/auth/logout');
 
-  return <div />;
+    setAuthToken('');
+    setAppState(initialState);
+    queryCache.clear();
+    router.push('/login');
+  }, []);
+
+  return null;
 }
 
-export default withAuth(Logout);
+export default Logout;
