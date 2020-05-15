@@ -6,10 +6,11 @@ import { StateContext } from '../contexts/state';
 import { useGetUsers, useTableSearch } from '../hooks';
 import { isAdmin, convertUsersToMap } from '../utils/user';
 
-export default function TripTable({ data }) {
+export default function TripTable({ data, forPrint, noDataText }) {
   const {
     state: { user },
   } = useContext(StateContext);
+
   const { Search, data: filteredData } = useTableSearch(
     data,
     ['destination'],
@@ -48,7 +49,11 @@ export default function TripTable({ data }) {
         return name1 > name2 ? 1 : -1;
       },
     },
-    {
+    forPrint && {
+      Header: 'Comment',
+      accessor: 'comment',
+    },
+    !forPrint && {
       Header: '',
       Cell: (props) => (
         <Box d="flex" flex="1" justifyContent="center">
@@ -68,8 +73,10 @@ export default function TripTable({ data }) {
 
   return (
     <>
-      {Search}
-      <Table data={filteredData} noDataText="No trips found" columns={columns} />
+      {/* Search bar if not printing */}
+      {!forPrint && Search}
+
+      <Table data={filteredData} noDataText={noDataText || 'No trips found'} columns={columns} />
     </>
   );
 }

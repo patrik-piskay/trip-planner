@@ -21,7 +21,14 @@ export default function Header(props) {
   } = useContext(StateContext);
 
   return (
-    <Flex as="header" h="100px" bg="teal.500" alignItems="center" flexShrink="0" padding="16px">
+    <Flex
+      as="header"
+      h={!props.forPrint ? '100px' : '70px'}
+      bg="teal.500"
+      alignItems="center"
+      flexShrink="0"
+      padding="16px"
+    >
       <Flex width="100%" maxWidth="1168px" margin="0 auto" justifyContent="space-between">
         <Link href="/">
           <Heading as="h1" color="white" d="flex" alignItems="center" cursor="pointer">
@@ -30,7 +37,7 @@ export default function Header(props) {
           </Heading>
         </Link>
 
-        {user && (
+        {user && !props.forPrint && (
           <Menu>
             <MenuButton>
               <Box d="flex" alignItems="center">

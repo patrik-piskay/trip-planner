@@ -60,3 +60,33 @@ export function useTableSearch(inputData, indexes = [], placeholder) {
     data: dataToRender,
   };
 }
+
+const printIframe = <iframe src="" style={{ visibility: 'hidden', height: '1px' }} id="forPrint" />;
+
+export function usePrint(printUrl) {
+  const [isPreparingPrint, setIsPreparingPrint] = useState(false);
+
+  useEffect(() => {
+    const iframe = document.getElementById('forPrint');
+
+    if (isPreparingPrint) {
+      iframe.src = printUrl;
+
+      const messageHandler = (message) => {
+        if (message.data === 'data-loaded') {
+          setIsPreparingPrint(false);
+
+          document.getElementById('forPrint').contentWindow.print();
+        }
+      };
+
+      window.addEventListener('message', messageHandler);
+
+      return () => window.removeEventListener('message', messageHandler);
+    } else {
+      iframe.src = '';
+    }
+  }, [isPreparingPrint, printUrl]);
+
+  return [isPreparingPrint, setIsPreparingPrint, printIframe];
+}

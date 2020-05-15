@@ -11,18 +11,30 @@ import { StateContext } from '../../contexts/state';
 import TripTable from '../../components/TripTable';
 import http from '../../utils/http';
 import { isAdmin } from '../../utils/user';
+import { usePrint } from '../../hooks';
 
 function Trips() {
   const {
     state: { user },
   } = useContext(StateContext);
   const { status, data, error } = useQuery('trips', () => http.get('/trips'));
+  const [isPreparingPrint, setIsPreparingPrint, printIframe] = usePrint('/trips/print');
 
   return (
     <Layout>
       <PageHeader>
         <Title>{isAdmin(user) ? 'Trips' : 'My Trips'}</Title>
         <Actions>
+          <Button
+            variantColor="teal"
+            variant="outline"
+            mr="4"
+            isLoading={isPreparingPrint}
+            loadingText="Preparing for print"
+            onClick={() => setIsPreparingPrint(true)}
+          >
+            Print 30-day plan
+          </Button>
           <Link href="/trips/new">
             <a>
               <Button variantColor="teal">New Trip</Button>
@@ -52,6 +64,8 @@ function Trips() {
           </Box>
         )}
       </Body>
+
+      {printIframe}
     </Layout>
   );
 }
