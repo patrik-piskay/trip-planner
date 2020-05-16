@@ -1,6 +1,6 @@
 {
-  "name": "client2",
-  "version": "0.1.0",
+  "name": "travel-plans-client",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

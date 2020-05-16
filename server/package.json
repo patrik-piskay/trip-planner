@@ -1,6 +1,6 @@
 {
   "name": "travel-plans-server",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "src/index.js",
   "author": "Patrik Piskay <piskay.patrik@gmail.com>",
