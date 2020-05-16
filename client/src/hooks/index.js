@@ -30,6 +30,7 @@ const Search = ({ searchText, setSearchText, placeholder }) => (
       placeholder={placeholder || 'Search'}
       value={searchText}
       onChange={({ target: { value } }) => setSearchText(value)}
+      focusBorderColor="teal.400"
     />
   </InputGroup>
 );

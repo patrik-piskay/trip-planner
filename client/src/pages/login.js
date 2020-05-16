@@ -84,11 +84,21 @@ function Login(props) {
               )}
               <Box>
                 <FormLabel htmlFor="username">Username</FormLabel>
-                <Input type="text" id="username" ref={usernameInputRef} />
+                <Input
+                  type="text"
+                  id="username"
+                  ref={usernameInputRef}
+                  focusBorderColor="teal.400"
+                />
               </Box>
               <Box mt="2">
                 <FormLabel htmlFor="password">Password</FormLabel>
-                <Input type="password" id="password" ref={passwordInputRef} />
+                <Input
+                  type="password"
+                  id="password"
+                  ref={passwordInputRef}
+                  focusBorderColor="teal.400"
+                />
               </Box>
               <Box mt="8">
                 <Button

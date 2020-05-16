@@ -114,7 +114,7 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
             <FormLabel htmlFor="user_id" isRequired>
               User
             </FormLabel>
-            <Select ref={userIdRef}>
+            <Select ref={userIdRef} focusBorderColor="teal.400">
               <option value="">Select user</option>
               {allUsers
                 .filter((user) => isUser(user))
@@ -139,6 +139,7 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
             id="destination"
             defaultValue={trip?.destination}
             ref={destinationRef}
+            focusBorderColor="teal.400"
           />
         </Box>
       </FormControl>
@@ -148,7 +149,13 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
           <FormLabel htmlFor="start_date" isRequired>
             Start Date
           </FormLabel>
-          <Input type="text" id="start_date" defaultValue={trip?.start_date} ref={startDateRef} />
+          <Input
+            type="text"
+            id="start_date"
+            defaultValue={trip?.start_date}
+            ref={startDateRef}
+            focusBorderColor="teal.400"
+          />
           <FormHelperText id="email-helper-text">Enter in YYYY/MM/DD format</FormHelperText>
         </Box>
       </FormControl>
@@ -158,7 +165,13 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
           <FormLabel htmlFor="end_date" isRequired>
             End Date
           </FormLabel>
-          <Input type="text" id="end_date" defaultValue={trip?.end_date} ref={endDateRef} />
+          <Input
+            type="text"
+            id="end_date"
+            defaultValue={trip?.end_date}
+            ref={endDateRef}
+            focusBorderColor="teal.400"
+          />
           <FormHelperText id="email-helper-text">Enter in YYYY/MM/DD format</FormHelperText>
         </Box>
       </FormControl>
@@ -166,7 +179,12 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
       <FormControl>
         <Box mb="8">
           <FormLabel htmlFor="comment">Comment</FormLabel>
-          <Textarea id="comment" defaultValue={trip?.comment} ref={commentRef} />
+          <Textarea
+            id="comment"
+            defaultValue={trip?.comment}
+            ref={commentRef}
+            focusBorderColor="teal.400"
+          />
         </Box>
       </FormControl>
 

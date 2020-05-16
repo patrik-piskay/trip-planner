@@ -98,6 +98,42 @@ export default function UserForm({ user, onSubmit, isSubmitting }) {
     }
   };
 
+  const nameField = (
+    <FormControl isInvalid={!fieldValid.name}>
+      <Box mb="4">
+        <FormLabel htmlFor="name" isRequired>
+          Name
+        </FormLabel>
+        <Input
+          type="text"
+          id="name"
+          defaultValue={user?.name}
+          ref={nameRef}
+          focusBorderColor="teal.400"
+        />
+      </Box>
+    </FormControl>
+  );
+  const passwordField = (
+    <FormControl isInvalid={!fieldValid.password}>
+      <Box mb="4">
+        <FormLabel htmlFor="password" isRequired={!user}>
+          Password
+        </FormLabel>
+        <Input type="password" id="password" ref={passwordRef} focusBorderColor="teal.400" />
+        {user ? (
+          <FormHelperText id="email-helper-text">
+            If you don't want to change the password, leave this field empty
+          </FormHelperText>
+        ) : (
+          <FormHelperText id="email-helper-text">
+            Password needs to be at least 6 characters long
+          </FormHelperText>
+        )}
+      </Box>
+    </FormControl>
+  );
+
   return (
     <form onSubmit={validate}>
       {!user && isAdmin(currentUser) && (
@@ -106,7 +142,7 @@ export default function UserForm({ user, onSubmit, isSubmitting }) {
             <FormLabel htmlFor="role_id" isRequired>
               Role
             </FormLabel>
-            <Select ref={roleIdRef}>
+            <Select ref={roleIdRef} focusBorderColor="teal.400">
               <option value="">Select role</option>
               {roles.map((role) => (
                 <option value={role.id} key={role.id}>
@@ -129,38 +165,22 @@ export default function UserForm({ user, onSubmit, isSubmitting }) {
             defaultValue={user?.username}
             isDisabled={!!user}
             ref={usernameRef}
+            focusBorderColor="teal.400"
           />
         </Box>
       </FormControl>
 
-      <Flex direction={user ? 'column' : 'column-reverse'}>
-        <FormControl isInvalid={!fieldValid.name}>
-          <Box mb="4">
-            <FormLabel htmlFor="name" isRequired>
-              Name
-            </FormLabel>
-            <Input type="text" id="name" defaultValue={user?.name} ref={nameRef} />
-          </Box>
-        </FormControl>
-
-        <FormControl isInvalid={!fieldValid.password}>
-          <Box mb="4">
-            <FormLabel htmlFor="password" isRequired={!user}>
-              Password
-            </FormLabel>
-            <Input type="password" id="password" ref={passwordRef} />
-            {user ? (
-              <FormHelperText id="email-helper-text">
-                If you don't want to change the password, leave this field empty
-              </FormHelperText>
-            ) : (
-              <FormHelperText id="email-helper-text">
-                Password needs to be at least 6 characters long
-              </FormHelperText>
-            )}
-          </Box>
-        </FormControl>
-      </Flex>
+      {user ? (
+        <>
+          {nameField}
+          {passwordField}
+        </>
+      ) : (
+        <>
+          {passwordField}
+          {nameField}
+        </>
+      )}
 
       <Box textAlign="center" mt="4">
         <Button
