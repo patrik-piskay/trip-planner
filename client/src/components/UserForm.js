@@ -8,13 +8,14 @@ import {
   FormLabel,
   FormHelperText,
   Flex,
+  FormErrorMessage,
 } from '@chakra-ui/core';
 import { StateContext } from '../contexts/state';
 import { isAdmin } from '../utils/user';
 
 const passwordValidator = /^.{6,}$/;
 
-export default function UserForm({ user, onSubmit, isSubmitting }) {
+export default function UserForm({ user, onSubmit, isSubmitting, usernameExistsError }) {
   const {
     state: { user: currentUser, roles },
   } = useContext(StateContext);
@@ -154,7 +155,7 @@ export default function UserForm({ user, onSubmit, isSubmitting }) {
         </FormControl>
       )}
 
-      <FormControl isInvalid={!fieldValid.username}>
+      <FormControl isInvalid={!fieldValid.username || usernameExistsError}>
         <Box mb="4">
           <FormLabel htmlFor="username" isRequired={!user}>
             Username
@@ -167,6 +168,9 @@ export default function UserForm({ user, onSubmit, isSubmitting }) {
             ref={usernameRef}
             focusBorderColor="teal.400"
           />
+          {usernameExistsError && (
+            <FormErrorMessage>User with this username already exists</FormErrorMessage>
+          )}
         </Box>
       </FormControl>
 

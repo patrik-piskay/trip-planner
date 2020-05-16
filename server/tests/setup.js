@@ -1,10 +1,11 @@
 import supertest from 'supertest';
-import app from '../src/index.js';
+import app from '../src/server.js';
 import { refreshDbConnection } from '../src/db/db.js';
 import { populateDb, deleteDb } from '../tests/db/index.js';
 
 export default function setup(test) {
   test.before(async (t) => {
+    await deleteDb();
     t.context.server = await supertest(app);
   });
 

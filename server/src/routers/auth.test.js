@@ -120,7 +120,7 @@ test.serial('POST /auth/logout - valid token', async (t) => {
     Authorization: `Bearer ${user1token}`,
   });
 
-  t.is(res.status, 200);
+  t.is(res.status, 204);
   t.deepEqual(res.body, {});
 
   user = UserModel.getUserById(userId);

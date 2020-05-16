@@ -8,6 +8,7 @@ import {
   FormLabel,
   FormHelperText,
   Textarea,
+  FormErrorMessage,
 } from '@chakra-ui/core';
 import { StateContext } from '../contexts/state';
 import { useGetUsers } from '../hooks';
@@ -30,6 +31,7 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
     startDate: true,
     endDate: true,
   });
+  const [areDatesValid, setAreDatesValid] = useState(true);
 
   const userIdRef = useRef();
   const destinationRef = useRef();
@@ -56,6 +58,7 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
       startDate: true,
       endDate: true,
     });
+    setAreDatesValid(true);
 
     const userId = userIdRef.current ? userIdRef.current.value : null;
     const destination = destinationRef.current.value;
@@ -92,6 +95,16 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
         ...state,
         endDate: false,
       }));
+      isFormValid = false;
+    }
+
+    if (endDate < startDate) {
+      setFieldValid((state) => ({
+        ...state,
+        startDate: false,
+        endDate: false,
+      }));
+      setAreDatesValid(false);
       isFormValid = false;
     }
 
@@ -157,6 +170,9 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
             focusBorderColor="teal.400"
           />
           <FormHelperText id="email-helper-text">Enter in YYYY/MM/DD format</FormHelperText>
+          {!areDatesValid && (
+            <FormErrorMessage>Start Date cannot be after End Date</FormErrorMessage>
+          )}
         </Box>
       </FormControl>
 

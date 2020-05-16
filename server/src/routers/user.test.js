@@ -42,6 +42,17 @@ test.serial('POST /users - invalid data 2', async (t) => {
   t.deepEqual(res.body.errors[0].msg, 'password needs to be at least 6 characters long');
 });
 
+test.serial('POST /users - username already exists', async (t) => {
+  const res = await t.context.server.post('/users').send({
+    username: 'user1',
+    password: '123456',
+    name: 'name',
+  });
+
+  t.is(res.status, 409);
+  t.is(res.body.error, 'Username is already taken');
+});
+
 test.serial('POST /users - resource created', async (t) => {
   const res = await t.context.server.post('/users').send({
     username: 'user3',

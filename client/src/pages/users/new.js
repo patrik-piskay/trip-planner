@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, queryCache } from 'react-query';
 import { Box, useToast } from '@chakra-ui/core';
@@ -12,6 +12,7 @@ import UserForm from '../../components/UserForm';
 function NewUser() {
   const toast = useToast();
   const router = useRouter();
+  const [isUsernameExistsError, setIsUsernameExistsError] = useState(false);
 
   const createUser = ({ username, password, name, roleId }) => {
     const body = { username, password, name };
@@ -26,7 +27,10 @@ function NewUser() {
   };
 
   const [mutate, { status: createUserMutate }] = useMutation(createUser, {
-    onSuccess: (newUser) => {
+    onMutate() {
+      setIsUsernameExistsError(false);
+    },
+    onSuccess(newUser) {
       queryCache.setQueryData('users', (prevUsers) => [newUser, ...prevUsers]);
 
       toast({
@@ -38,14 +42,18 @@ function NewUser() {
 
       router.push('/users');
     },
-    onError: () => {
-      toast({
-        title: 'An error occurred.',
-        description: 'Unable to create user.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+    onError(error) {
+      if (error?.status === 409) {
+        setIsUsernameExistsError(true);
+      } else {
+        toast({
+          title: 'An error occurred.',
+          description: 'Unable to create user.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     },
   });
 
@@ -59,7 +67,11 @@ function NewUser() {
 
       <Body>
         <Box maxWidth="500px" m="0 auto">
-          <UserForm onSubmit={(data) => mutate(data)} isSubmitting={isSubmitting} />
+          <UserForm
+            onSubmit={(data) => mutate(data)}
+            isSubmitting={isSubmitting}
+            usernameExistsError={isUsernameExistsError}
+          />
         </Box>
       </Body>
     </Layout>

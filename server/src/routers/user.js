@@ -45,6 +45,12 @@ userRouter.post(
         .send({ error: 'Not authorized to create a user with advanced permission levels' });
     }
 
+    const usernameAlreadyExists = UserModel.getUserByUsername(username);
+
+    if (usernameAlreadyExists) {
+      return res.status(409).send({ error: 'Username is already taken' });
+    }
+
     const newUser = UserModel.createUser({
       username,
       name,

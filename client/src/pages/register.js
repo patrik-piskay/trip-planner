@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation } from 'react-query';
 import { Box, Flex, Text, useToast } from '@chakra-ui/core';
@@ -9,6 +9,7 @@ import withoutAuth from '../components/withoutAuth';
 function Register(props) {
   const toast = useToast();
   const router = useRouter();
+  const [isUsernameExistsError, setIsUsernameExistsError] = useState(false);
 
   const createUser = ({ username, name, password }) => {
     return http.post(`/users`, {
@@ -17,7 +18,10 @@ function Register(props) {
   };
 
   const [createUserMutate, { status: createUserStatus }] = useMutation(createUser, {
-    onSuccess: () => {
+    onMutate() {
+      setIsUsernameExistsError(false);
+    },
+    onSuccess() {
       toast({
         title: 'User created',
         description: 'You can now sign in',
@@ -28,14 +32,18 @@ function Register(props) {
 
       router.push('/login');
     },
-    onError: () => {
-      toast({
-        title: 'An error occurred.',
-        description: 'Unable to create user.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+    onError(error) {
+      if (error?.status === 409) {
+        setIsUsernameExistsError(true);
+      } else {
+        toast({
+          title: 'An error occurred.',
+          description: 'Unable to create user.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     },
   });
 
@@ -57,7 +65,11 @@ function Register(props) {
           Create New User
         </Text>
         <Box mt="3">
-          <UserForm onSubmit={(data) => createUserMutate(data)} isSubmitting={isSubmitting} />
+          <UserForm
+            onSubmit={(data) => createUserMutate(data)}
+            isSubmitting={isSubmitting}
+            usernameExistsError={isUsernameExistsError}
+          />
         </Box>
       </Flex>
     </Flex>
