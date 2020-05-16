@@ -31,10 +31,12 @@ export default function Header(props) {
     >
       <Flex width="100%" maxWidth="1168px" margin="0 auto" justifyContent="space-between">
         <Link href="/">
-          <Heading as="h1" color="white" d="flex" alignItems="center" cursor="pointer">
-            <Box as={FaRegPaperPlane} ml="5" mr="5" />
-            Trip Planner
-          </Heading>
+          <a>
+            <Heading as="h1" color="white" d="flex" alignItems="center" cursor="pointer">
+              <Box as={FaRegPaperPlane} ml="5" mr="5" />
+              Trip Planner
+            </Heading>
+          </a>
         </Link>
 
         {user && !props.forPrint && (

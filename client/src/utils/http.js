@@ -1,6 +1,9 @@
 import Router from 'next/router';
 import { getAuthToken, setAuthToken } from './auth';
 
+// eslint-disable-next-line
+const API_URL = process.env.API_URL;
+
 const customFetch = (path, opts) => {
   const token = getAuthToken();
   const headers = {
@@ -12,7 +15,7 @@ const customFetch = (path, opts) => {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  return fetch(`http://localhost:8000${path}`, {
+  return fetch(`${API_URL}${path}`, {
     method: opts.method,
     headers,
     body: opts.body ? JSON.stringify(opts.body) : undefined,

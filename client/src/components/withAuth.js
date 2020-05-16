@@ -10,6 +10,7 @@ export default function withAuth(Component) {
   return (props) => {
     const { state, setAppState } = useContext(StateContext);
     const [didInit, setDidInit] = useState(state.user !== null);
+    const [error, setError] = useState(null);
     const toast = useToast();
 
     const bootstrap = async () => {
@@ -31,6 +32,8 @@ export default function withAuth(Component) {
         setDidInit(true);
       } catch (error) {
         if (!error.status) {
+          setError(error);
+
           toast({
             title: 'Unable to load the application.',
             status: 'error',
@@ -51,7 +54,7 @@ export default function withAuth(Component) {
       return (
         <Layout>
           <Box d="flex" flex="1" alignItems="center" justifyContent="center">
-            <Spinner size="xl" color="gray.600" />
+            {!error && <Spinner size="xl" color="gray.600" />}
           </Box>
         </Layout>
       );
