@@ -7,7 +7,6 @@ import {
   Select,
   FormLabel,
   FormHelperText,
-  Flex,
   FormErrorMessage,
 } from '@chakra-ui/core';
 import { StateContext } from '../contexts/state';
@@ -122,13 +121,12 @@ export default function UserForm({ user, onSubmit, isSubmitting, usernameExistsE
           Password
         </FormLabel>
         <Input type="password" id="password" ref={passwordRef} focusBorderColor="teal.400" />
-        {user ? (
+        <FormHelperText id="email-helper-text">
+          Password needs to be at least 6 characters long
+        </FormHelperText>
+        {user && (
           <FormHelperText id="email-helper-text">
             If you don't want to change the password, leave this field empty
-          </FormHelperText>
-        ) : (
-          <FormHelperText id="email-helper-text">
-            Password needs to be at least 6 characters long
           </FormHelperText>
         )}
       </Box>

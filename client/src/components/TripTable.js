@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import { Box, Button } from '@chakra-ui/core';
 import Table from './Table';
@@ -11,14 +11,19 @@ export default function TripTable({ data, forPrint, noDataText }) {
     state: { user },
   } = useContext(StateContext);
 
-  const { Search, data: filteredData } = useTableSearch(
-    data,
-    ['destination'],
-    'Search by destination',
-  );
-
   const allUsersArray = useGetUsers();
   const allUsers = convertUsersToMap(allUsersArray);
+
+  const searchInputData = useMemo(
+    () => data.map((trip) => ({ ...trip, user_name: allUsers[trip.user_id]?.name })),
+    [data],
+  );
+
+  const { Search, data: filteredData } = useTableSearch(
+    searchInputData,
+    isAdmin(user) ? ['destination', 'user_name'] : ['destination'],
+    isAdmin(user) ? 'Search by destination or user name' : 'Search by destination',
+  );
 
   const columns = [
     {

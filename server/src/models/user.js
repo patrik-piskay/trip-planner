@@ -30,7 +30,9 @@ export function getAllRoles(id) {
 }
 
 export function findByCredentials(username, password) {
-  const user = queryOne('SELECT * FROM users WHERE username = ?', [username]);
+  const user = queryOne('SELECT * FROM users WHERE username = ? AND archived_at IS NULL', [
+    username,
+  ]);
 
   if (!user) {
     return null;

@@ -29,7 +29,7 @@ authRouter.post(
     const user = UserModel.findByCredentials(username, password);
 
     if (!user) {
-      return res.status(401).send({ error: 'Invalid login credentials' });
+      return res.status(403).send({ error: 'Invalid login credentials' });
     }
 
     const token = UserModel.generateAuthToken(user);

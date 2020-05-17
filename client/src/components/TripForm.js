@@ -14,7 +14,20 @@ import { StateContext } from '../contexts/state';
 import { useGetUsers } from '../hooks';
 import { isUser, isAdmin } from '../utils/user';
 
-const dateValidator = /^\d{4}\/\d{2}\/\d{2}$/;
+const dateFormatValidator = /^\d{4}\/\d{2}\/\d{2}$/;
+const dateValidator = (date) => {
+  const [year, month, day] = date.split('/');
+
+  if (month < '01' || month > '12') {
+    return 'Invalid month';
+  }
+
+  if (day < '01' || day > '31') {
+    return 'Invalid day';
+  }
+
+  return null;
+};
 
 const sortByNameAsc = (a, b) => (a.name < b.name ? -1 : 1);
 
@@ -31,7 +44,8 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
     startDate: true,
     endDate: true,
   });
-  const [areDatesValid, setAreDatesValid] = useState(true);
+  const [startDateError, setStartDateError] = useState(null);
+  const [endDateError, setEndDateError] = useState(null);
 
   const userIdRef = useRef();
   const destinationRef = useRef();
@@ -58,7 +72,8 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
       startDate: true,
       endDate: true,
     });
-    setAreDatesValid(true);
+    setStartDateError(null);
+    setEndDateError(null);
 
     const userId = userIdRef.current ? userIdRef.current.value : null;
     const destination = destinationRef.current.value;
@@ -82,29 +97,51 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
       isFormValid = false;
     }
 
-    if (!startDate.match(dateValidator)) {
+    if (!startDate.match(dateFormatValidator)) {
       setFieldValid((state) => ({
         ...state,
         startDate: false,
       }));
       isFormValid = false;
+    } else {
+      const error = dateValidator(startDate);
+
+      if (error) {
+        setFieldValid((state) => ({
+          ...state,
+          startDate: false,
+        }));
+        isFormValid = false;
+        setStartDateError(error);
+      }
     }
 
-    if (!endDate.match(dateValidator)) {
+    if (!endDate.match(dateFormatValidator)) {
       setFieldValid((state) => ({
         ...state,
         endDate: false,
       }));
       isFormValid = false;
+    } else {
+      const error = dateValidator(endDate);
+
+      if (error) {
+        setFieldValid((state) => ({
+          ...state,
+          endDate: false,
+        }));
+        isFormValid = false;
+        setEndDateError(error);
+      }
     }
 
-    if (endDate < startDate) {
+    if (startDate && endDate && endDate < startDate) {
       setFieldValid((state) => ({
         ...state,
         startDate: false,
         endDate: false,
       }));
-      setAreDatesValid(false);
+      setStartDateError('Start Date cannot be after End Date');
       isFormValid = false;
     }
 
@@ -170,9 +207,7 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
             focusBorderColor="teal.400"
           />
           <FormHelperText id="email-helper-text">Enter in YYYY/MM/DD format</FormHelperText>
-          {!areDatesValid && (
-            <FormErrorMessage>Start Date cannot be after End Date</FormErrorMessage>
-          )}
+          {startDateError && <FormErrorMessage>{startDateError}</FormErrorMessage>}
         </Box>
       </FormControl>
 
@@ -189,6 +224,7 @@ export default function TripForm({ trip, onSubmit, isSubmitting }) {
             focusBorderColor="teal.400"
           />
           <FormHelperText id="email-helper-text">Enter in YYYY/MM/DD format</FormHelperText>
+          {endDateError && <FormErrorMessage>{endDateError}</FormErrorMessage>}
         </Box>
       </FormControl>
 

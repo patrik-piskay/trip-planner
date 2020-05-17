@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import { Box, Button, Badge } from '@chakra-ui/core';
 import Table from './Table';
@@ -10,10 +10,20 @@ export default function UserTable({ data }) {
   const {
     state: { user, roles },
   } = useContext(StateContext);
+
+  const searchInputData = useMemo(
+    () =>
+      data.map((user) => ({
+        ...user,
+        role_name: roles.find((role) => role.id === user.role_id).name,
+      })),
+    [data],
+  );
+
   const { Search, data: filteredData } = useTableSearch(
-    data,
-    ['username', 'name'],
-    'Search by name or username',
+    searchInputData,
+    ['username', 'name', 'role_name'],
+    'Search by name, username or role',
   );
 
   const columns = [

@@ -1,7 +1,7 @@
 /*@jsx jsx*/
 import { jsx, css } from '@emotion/core';
 
-import React from 'react';
+import React, { useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation, queryCache } from 'react-query';
@@ -24,6 +24,9 @@ import withPermissions from '../../../components/withPermissions';
 import Error from '../../../components/Error';
 import { ROLE } from '../../../constants';
 import http from '../../../utils/http';
+import { useGetUsers } from '../../../hooks';
+import { convertUsersToMap, isAdmin } from '../../../utils/user';
+import { StateContext } from '../../../contexts/state';
 
 function daysLeftFromNow(date) {
   const currentDate = new Date();
@@ -38,14 +41,39 @@ function daysLeftFromNow(date) {
   return Math.floor((tripDateUTC - currentDateUTC) / (1000 * 60 * 60 * 24));
 }
 
+function endsInFuture(endDate) {
+  const currentDate = new Date();
+  const currentDayUTC = Date.UTC(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate(),
+  );
+
+  const tripEndDate = new Date(endDate);
+  const tripEndDayUTC = Date.UTC(
+    tripEndDate.getFullYear(),
+    tripEndDate.getMonth(),
+    tripEndDate.getDate(),
+  );
+
+  return tripEndDayUTC >= currentDayUTC;
+}
+
 function Trip(props) {
   const toast = useToast();
   const router = useRouter();
   const tripId = router.query.id;
 
+  const {
+    state: { user },
+  } = useContext(StateContext);
+
   const { status, data: trip, error } = useQuery(['trip', { id: tripId }], () =>
     http.get(`/trips/${tripId}`),
   );
+
+  const allUsersArray = useGetUsers();
+  const allUsers = convertUsersToMap(allUsersArray);
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const onClose = () => setIsDeleteDialogOpen(false);
@@ -149,9 +177,15 @@ function Trip(props) {
                     <td>Status</td>
                     <td>
                       {daysLeft < 0 ? (
-                        <Badge variantColor="pink" px="3" fontSize="0.9em">
-                          Past
-                        </Badge>
+                        endsInFuture(trip.end_date) ? (
+                          <Badge variantColor="orange" px="3" fontSize="0.9em">
+                            Ongoing
+                          </Badge>
+                        ) : (
+                          <Badge variantColor="pink" px="3" fontSize="0.9em">
+                            Past
+                          </Badge>
+                        )
                       ) : daysLeft === 0 ? (
                         <Badge variantColor="green" px="3" fontSize="0.9em">
                           <span role="img" aria-label="party emoji">
@@ -168,12 +202,24 @@ function Trip(props) {
                             Upcoming
                           </Badge>
                           <Badge variantColor="blue" px="3" fontSize="0.9em" ml="4">
-                            in {daysLeft} days
+                            in {daysLeft} {daysLeft === 1 ? 'day' : 'days'}
                           </Badge>
                         </>
                       )}
                     </td>
                   </tr>
+                  {isAdmin(user) && (
+                    <tr>
+                      <td>User</td>
+                      <td>
+                        {allUsers[trip.user_id]?.name || (
+                          <Box as="i" color="gray.500">
+                            deleted user
+                          </Box>
+                        )}
+                      </td>
+                    </tr>
+                  )}
                   <tr>
                     <td>Destination</td>
                     <td>{trip.destination}</td>

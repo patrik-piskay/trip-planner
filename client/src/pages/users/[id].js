@@ -137,7 +137,7 @@ function User(props) {
       <Layout>
         <PageHeader>
           <Title>User Profile</Title>
-          {user && (
+          {user && currentUser.id !== user.id && (
             <Actions>
               <Button variantColor="red" ml="3" onClick={() => setIsDeleteDialogOpen(true)}>
                 Delete
@@ -156,6 +156,7 @@ function User(props) {
           ) : user ? (
             <Box maxWidth="500px" m="0 auto">
               <UserForm
+                key={userId}
                 user={user}
                 onSubmit={(data) => userEditMutate(data)}
                 isSubmitting={isSubmitting}

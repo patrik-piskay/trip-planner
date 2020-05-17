@@ -50,17 +50,17 @@ test.serial('POST /auth/login - no data', async (t) => {
   t.is(res.body.errors.length, 2);
 });
 
-test.serial('POST /auth - invalid credentials', async (t) => {
+test.serial('POST /auth/login - invalid credentials', async (t) => {
   const res = await t.context.server.post('/auth/login').send({
     username: '123',
     password: '123',
   });
 
-  t.is(res.status, 401);
+  t.is(res.status, 403);
   t.is(res.body.error, 'Invalid login credentials');
 });
 
-test.serial('POST /auth - valid credentials', async (t) => {
+test.serial('POST /auth/login - valid credentials', async (t) => {
   const userId = '3dade573-e975-4abf-a711-ba3338acf547';
   let user = UserModel.getUserById(userId);
 
@@ -88,6 +88,33 @@ test.serial('POST /auth - valid credentials', async (t) => {
 
   t.is(tokens.length, 2);
   t.is(tokens.includes(res.body.token), true);
+});
+
+test.serial('POST /auth/login - user deleted', async (t) => {
+  const userId = '3dade573-e975-4abf-a711-ba3338acf547';
+  let user = UserModel.getUserById(userId);
+
+  t.is(user.archived_at, null);
+
+  let res = await t.context.server.post('/auth/login').send({
+    username: 'user1',
+    password: 'pass123',
+  });
+
+  t.is(res.status, 200);
+
+  UserModel.deleteUser(userId);
+  user = UserModel.getUserById(userId);
+
+  t.not(user.archived_at, null);
+
+  res = await t.context.server.post('/auth/login').send({
+    username: 'user1',
+    password: 'pass123',
+  });
+
+  t.is(res.status, 403);
+  t.is(res.body.error, 'Invalid login credentials');
 });
 
 test.serial('POST /auth/logout - no token', async (t) => {
