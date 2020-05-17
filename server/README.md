@@ -47,6 +47,14 @@ NODE_ENV=production node src/index.js
 
 Both will start a server on port that was specified in the `PORT` environment variable.
 
+To run tests, run:
+
+```
+npm run test
+# or
+yarn test
+```
+
 ---
 
 ## API documentation
