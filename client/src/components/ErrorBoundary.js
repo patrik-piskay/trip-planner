@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@chakra-ui/core';
+import { Button, Box } from '@chakra-ui/core';
 
 export default class ErrorBoundary extends React.Component {
   state = {
@@ -18,13 +18,10 @@ export default class ErrorBoundary extends React.Component {
 }
 
 export const ErrorMessage = ({ reset }) => (
-  <div className="pa-errorBoundary">
-    <div className="pa-errorBoundary-message">
-      {"We're sorry, an unexpected error has occurred. Please try reloading the page."}
-    </div>
-    <br />
-    <Button variant="primary" onClick={reset}>
+  <Box>
+    <Box>{"We're sorry, an unexpected error has occurred. Please try reloading the page."}</Box>
+    <Button variantColor="teal" onClick={reset} mt="6">
       {'Reload'}
     </Button>
-  </div>
+  </Box>
 );

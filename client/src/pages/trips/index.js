@@ -17,7 +17,7 @@ function Trips() {
   const {
     state: { user },
   } = useContext(StateContext);
-  const { status, data, error } = useQuery('trips', () => http.get('/trips'));
+  const { status, data: trips, error } = useQuery('trips', () => http.get('/trips'));
   const [isPreparingPrint, setIsPreparingPrint, printIframe] = usePrint('/trips/print');
 
   return (
@@ -42,7 +42,7 @@ function Trips() {
           )}
         </Title>
         <Actions>
-          {isUser(user) && (
+          {isUser(user) && !!trips?.length && (
             <Button
               variantColor="teal"
               variant="outline"
@@ -71,9 +71,9 @@ function Trips() {
           </Box>
         ) : error ? (
           <Error error={error} />
-        ) : data.length ? (
+        ) : trips.length ? (
           <Box maxWidth="1000px" m="0 auto">
-            <TripTable data={data} />
+            <TripTable data={trips} />
           </Box>
         ) : (
           <Box textAlign="center" mt="32">

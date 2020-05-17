@@ -5,6 +5,7 @@ import { ThemeProvider, CSSReset } from '@chakra-ui/core';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import ErrorBoundary, { ErrorMessage } from '../components/ErrorBoundary';
 import { StateProvider } from '../contexts/state';
+import Layout from '../components/Layout';
 
 import 'react-table-v6/react-table.css';
 
@@ -97,7 +98,9 @@ export default function MyApp({ Component, pageProps }) {
               </ReactQueryConfigProvider>
             </ThemeProvider>
           ) : (
-            <ErrorMessage />
+            <Layout>
+              <ErrorMessage />
+            </Layout>
           )
         }
       </ErrorBoundary>
