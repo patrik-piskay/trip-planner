@@ -1,4 +1,4 @@
-# Travel plans server
+# Trip Planner server
 
 This is an Express Node.js server using a local SQLite database for data persistance.
 
